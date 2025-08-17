@@ -1,0 +1,105 @@
+func verletUpdate(posX, posY, velX, velY)
+microasm {
+    lbindl i7 posX h0    // bind posX, i7 = len
+    lbind  posY    h1    // bind posY
+    lbind  velX    h2    // bind velX
+    lbind  velY    h3    // bind velY
+
+    rload i0 0           // index
+    rload f4 0.1         // gravity
+    rload f5 0.99        // damping
+
+loop:
+    rsub i6 i7 i0
+    jz i6 .done
+
+    // vel
+    lloadup f0 i0 h2     // vx = velX[i++]
+    lloadup f1 i0 h3     // vy = velY[i++]
+
+    // apply gravity + damping
+    radd f1 f1 f4
+    rmul f0 f0 f5
+    rmul f1 f1 f5
+
+    // pos
+    lloadup f2 i0 h0     // x = posX[i++]
+    lloadup f3 i0 h1     // y = posY[i++]
+
+    // integrate
+    radd f2 f2 f0
+    radd f3 f3 f1
+
+    // store back
+    lstoreup f2 i0 h0    // posX[i++] = x
+    lstoreup f3 i0 h1    // posY[i++] = y
+    lstoreup f0 i0 h2    // velX[i++] = vx
+    lstoreup f1 i0 h3    // velY[i++] = vy
+
+    jmp .loop
+done:
+    rload  i0 0
+    return i0
+}
+
+func verletScript(posX, posY, velX, velY)
+{
+    var gravity = 0.1
+    var damping = 0.99
+    for (var i = 0; i < posX.size(); i = i + 1)
+    {
+        var vx = velX[i]
+        var vy = velY[i]
+        vy = vy + gravity
+        vx = vx * damping
+        vy = vy * damping
+
+        posX[i] = posX[i] + vx
+        posY[i] = posY[i] + vy
+        velX[i] = vx
+        velY[i] = vy
+    }
+}
+
+// Init arrays
+var SIZE = 10000
+var posX = []; var posY = []
+var velX = []; var velY = []
+for (var i = 0; i < SIZE; i = i + 1) {
+    posX.push(0.0)
+    posY.push(0.0)
+
+    var vx = 0.0
+    if (i % 5 == 0) vx = 1.0
+    velX.push(vx)
+
+    var vy = 0.0
+    if (i % 3 == 0) vy = 0.5
+    velY.push(vy)
+}
+
+// Microasm
+var t0 = clock()
+verletUpdate(posX, posY, velX, velY)
+var t1 = clock()
+println("ASM PATH:      ", t1 - t0)
+
+// Reset arrays
+for (var i = 0; i < SIZE; i = i + 1) {
+    posX[i] = 0.0
+    posY[i] = 0.0
+
+    var vx = 0.0
+    if (i % 5 == 0) vx = 1.0
+    velX[i] = vx
+
+    var vy = 0.0
+    if (i % 3 == 0) vy = 0.5
+    velY[i] = vy
+}
+
+// Script
+var t2 = clock()
+verletScript(posX, posY, velX, velY)
+var t3 = clock()
+println("SCRIPT PATH:   ", t3 - t2)

@@ -1,0 +1,18 @@
+#pragma once
+
+#include "./object.h"
+#include "./vm.h"
+
+// clang-format off
+#define IS_NATIVE(value)       isObjType(value, OBJ_NATIVE)
+#define AS_NATIVE(value)       (((ObjNative*)AS_OBJ(value))->function)
+// clang-format on
+
+typedef bool (*NativeFn)(VM* vm, int argCount, Value* args);
+
+typedef struct {
+  Obj obj;
+  NativeFn function;
+} ObjNative;
+
+ObjNative* newNative(GC* gc, NativeFn function);

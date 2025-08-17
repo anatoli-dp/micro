@@ -1,0 +1,61 @@
+{
+    var start = clock()
+
+    // Arithmetic loop
+    var sum = 0
+    for (var i = 1; i <= 50000; ++i) {
+        sum += i
+    }
+
+    // Function call overhead
+    func inc10(x) {
+        var c = 0
+        while (c < 10) {
+            x += 1
+            c += 1
+        }
+        return x
+    }
+
+    var val = 0
+    var j = 0
+    while (j < 5000) {
+        val = inc10(val)
+        j += 1
+    }
+
+    // String concatenation
+    var s = ""
+    var k = 0
+    while (k < 1000) {
+        s += "z"
+        k += 1
+    }
+
+    // Nested loops
+    var c = 0
+    outer: for (var m = 0; m < 100; ++m) {
+        inner: for (var n = 0; n < 100; ++n) {
+            if (n == 20) break inner
+            if (m == 50) break outer
+            c += 1
+        }
+    }
+
+    // Simple recursion
+    func recur(n) {
+        if (n == 0) return 1
+        return 1 + recur(--n)
+    }
+    var recres = recur(50)
+
+    var end = clock()
+    println("Elapsed ms:", end - start)
+
+    println("sum (1..50000):", sum)
+    println("val (after 5000*inc10):", val)
+    println("s.size():", s.size())
+    println("c (nested loops):", c)
+    println("recur(50):", recres)
+    println("DONE")
+}

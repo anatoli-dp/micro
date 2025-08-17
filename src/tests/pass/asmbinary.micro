@@ -1,0 +1,239 @@
+{
+    println("Test: rand RR (0xFF & 0x0F)")
+    var out = 0
+    microasm {
+      rload i0 0xFF
+      rload i1 0x0F
+      rand i2 i0 i1
+      rstore i2 out
+    }
+    println("Expected : Actual >> ", 15, " : ", out)
+}
+
+{
+    println("Test: rand RI (0xAA & 0x0F)")
+    var out = 0
+    microasm {
+      rload i0 0xAA
+      rand i1 i0 0x0F
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 10, " : ", out)
+}
+
+{
+    println("Test: rand IR (0x0F & i0)")
+    var out = 0
+    microasm {
+      rload i0 0xF0
+      rand i1 0x0F i0
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 0, " : ", out)
+}
+
+{
+    println("Test: rand II (0x33 & 0x55)")
+    var out = 0
+    microasm {
+      rand i0 0x33 0x55
+      rstore i0 out
+    }
+    println("Expected : Actual >> ", 17, " : ", out)
+}
+
+{
+    println("Test: Mixed: (0xF0 | 0x0F) ^ 0xAA")
+    var out = 0
+    microasm {
+      rload i0 0xF0
+      rbor  i1 i0 0x0F     // i1 = 0xF0 | 0x0F = 0xFF
+      rbxor i2 i1 0xAA     // i2 = 0xFF ^ 0xAA = 0x55
+      rstore i2 out
+    }
+    println("Expected : Actual >> ", 85, " : ", out)
+}
+
+{
+    println("Test: rrol 0b10000001 by 1")
+    var out = 0
+    microasm {
+      rload i0 0b10000001
+      rrol i1 i0 1
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 258, " : ", out)
+}
+
+{
+    println("Test: rsar -64 >> 3 = -8")
+    var out = 0
+    microasm {
+      rload i0 -64
+      rsar i1 i0 3
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", -8, " : ", out)
+}
+
+{
+    println("Test: rbtst bit 4 of 0b10010000")
+    var out = 0
+    microasm {
+      rload i0 0b10010000
+      rbtst i1 i0 4
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 1, " : ", out)
+}
+
+{
+    println("Test: rbclr bit 3 of 0b1111")
+    var out = 0
+    microasm {
+      rload i0 0b1111
+      rbclr i1 i0 3
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 7, " : ", out)
+}
+
+{
+    println("Test: rbtgl bit 1 of 0b0011")
+    var out = 0
+    microasm {
+      rload i0 0b0011
+      rbtgl i1 i0 1
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 1, " : ", out)
+}
+
+{
+    println("Test: rbnot ~0xFFFF (lower 52 bits only)")
+    var out = 0
+    microasm {
+      rload i0 0xFFFF
+      rbnot i1 i0
+      // mask to 52 bits to ensure script layer reads correct value
+      rand  i1 i1 0xFFFFFFFFFFFFF  // = (1 << 52) - 1
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 4503599627368448, " : ", out)
+}
+
+{
+    println("Test: rrol 0b10000001 by 1 (emulated 8-bit)")
+    var out = 0
+    microasm {
+      rload i0 0b10000001         // 0x81
+      rand  i0 i0 0xFF            // mask to 8 bits
+
+      // Compute: (i0 << 1) | (i0 >> 7), all masked to 8 bits
+      rshl  i1 i0 1               // i1 = i0 << 1
+      rshr  i2 i0 7               // i2 = i0 >> 7
+      rbor  i1 i1 i2              // i1 = (i0 << 1) | (i0 >> 7)
+      rand  i1 i1 0xFF            // final mask to 8 bits
+
+      rstore i1 out
+    }
+    println("Expected : Actual >> ", 3, " : ", out)
+}
+
+{
+    println("Test: pack RGB into 24-bit and extract B")
+    var r = 5
+    var g = 10
+    var b = 200
+    var rgb = 0
+    var extractedB = 0
+    microasm {
+      // Pack R:G:B as (r << 16) | (g << 8) | b
+      rload i0 r
+      rload i1 g
+      rload i2 b
+
+      rshl i0 i0 16       // R << 16
+      rshl i1 i1 8        // G << 8
+
+      rbor i3 i0 i1       // temp = R<<16 | G<<8
+      rbor i3 i3 i2       // rgb = temp | B
+
+      rstore i3 rgb
+
+      // Extract B: rgb & 0xFF
+      rand i4 i3 0xFF
+      rstore i4 extractedB
+    }
+    println("Expected : Actual >> ", 200, " : ", extractedB)
+}
+
+{
+    println("Test: enable and toggle flags, then test bit 4")
+    var flags = 0b00000000
+    var testBit = 0
+    microasm {
+      rload i0 flags
+
+      // Set bits 3 and 4: i0 |= (1 << 3) | (1 << 4)
+      rbor i0 i0 0b00011000
+
+      // Toggle bit 4 again: i0 ^= (1 << 4)
+      rbxor i0 i0 0b00010000
+
+      // Test bit 4: should now be 0
+      rbtst i1 i0 4
+
+      rstore i1 testBit
+    }
+    println("Expected : Actual >> ", 0, " : ", testBit)
+}
+
+{
+    println("Test: abs(-15) using bit ops")
+    var x = -15
+    var absVal = 0
+    microasm {
+      rload i0 x
+      rsar i1 i0 63           // sign mask = i0 >> 63 (all 1s if negative)
+      rbxor i2 i0 i1          // flip bits if negative
+      rsub  i2 i2 i1          // +1 if negative
+      rstore i2 absVal
+    }
+    println("Expected : Actual >> ", 15, " : ", absVal)
+}
+
+{
+    println("Test: wrap 258 to 0..255 using AND")
+    var raw = 258
+    var wrapped = 0
+    microasm {
+      rload i0 raw
+      rand  i1 i0 0xFF     // wrap to 0..255
+      rstore i1 wrapped
+    }
+    println("Expected : Actual >> ", 2, " : ", wrapped)
+}
+
+{
+    println("Test: parity of 0b1011 (odd parity = 1)")
+    var v = 0b1011
+    var parity = 0
+    microasm {
+      rload i0 v
+
+      rshr i1 i0 1
+      rbxor i0 i0 i1
+
+      rshr i1 i0 2
+      rbxor i0 i0 i1
+
+      rshr i1 i0 4
+      rbxor i0 i0 i1
+
+      rand  i0 i0 1        // isolate LSB
+
+      rstore i0 parity
+    }
+    println("Expected : Actual >> ", 1, " : ", parity)
+}

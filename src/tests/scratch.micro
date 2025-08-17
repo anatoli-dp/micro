@@ -1,0 +1,4 @@
+var m = 5
+var x = m > 3 ? "yes" : "no"
+
+print x

@@ -1,0 +1,224 @@
+// ---- Simple forward goto ----
+{
+    println("Test 1: Simple forward goto");
+    var x = 5;
+    goto label1;
+    x = 99; // skipped
+    label1:
+    x = x + 1;
+    println("expected: 6");
+    println("actual: ", x);
+}
+
+// ---- Simple backward goto ----
+{
+    println("Test 2: Simple backward goto");
+    var s = "";
+    var i = 0;
+    loop:
+    s = s + str(i);
+    i = i + 1;
+    if (i < 3) goto loop;
+    println("expected: 012");
+    println("actual: ", s);
+}
+
+// ---- Multiple gotos to the same label (forward/backward) ----
+{
+    println("Test 3: Multiple gotos to same label");
+    var a = 0;
+    if (a == 0) goto shared;
+    a = 50; // skipped
+    shared:
+    a = a + 10;
+    if (a < 15) goto shared;
+    println("expected: 20");
+    println("actual: ", a);
+}
+
+// ---- Goto forward out of nested block ----
+{
+    println("Test 4: Forward out of nested block");
+    var msg = "A";
+    {
+        msg = msg + "B";
+        goto outside;
+        msg = msg + "Z"; // skipped
+    }
+    outside:
+    msg = msg + "C";
+    println("expected: ABC");
+    println("actual: ", msg);
+}
+
+// ---- Goto backward from nested block (nested to outer) ----
+{
+    println("Test 5: Backward out of nested block");
+    var t = 0;
+    outer:
+    {
+        t = t + 1;
+        {
+            if (t < 2) goto outer;
+        }
+    }
+    println("expected: 2");
+    println("actual: ", t);
+}
+
+// ---- Goto as early-exit from loop ----
+{
+    println("Test 6: Forward goto to exit loop early");
+    var x = "";
+    for (var i = 0; i < 4; i = i + 1) {
+        if (i == 2) goto done;
+        x = x + str(i);
+    }
+    done:
+    x = x + "!";
+    println("expected: 01!");
+    println("actual: ", x);
+}
+
+// ---- Goto backward to emulate continue ----
+{
+    println("Test 7: Backward goto to loop start (manual continue)");
+    var s = "";
+    var i = 0;
+    start:
+    if (i == 2) {
+        i = i + 1;
+        goto start;
+    }
+    if (i > 3) goto finished;
+    s = s + str(i);
+    i = i + 1;
+    goto start;
+    finished:
+    println("expected: 013");
+    println("actual: ", s);
+}
+
+// ---- Forward goto to shared label from multiple places ----
+{
+    println("Test 8: Multiple forward gotos to shared label");
+    var n = 0;
+    if (n == 0) goto common;
+    n = 100; // skipped
+    common:
+    n = n + 2;
+    if (n < 3) goto common;
+    println("expected: 4");
+    println("actual: ", n);
+}
+
+// ---- Backward goto between sibling blocks ----
+{
+    println("Test 9: Backward goto between sibling blocks");
+    var out = "";
+    block1:
+    {
+        out = out + "A";
+        goto block2;
+    }
+    block2:
+    {
+        out = out + "B";
+        if (out.size() < 3) goto block1;
+    }
+    println("expected: ABAB");
+    println("actual: ", out);
+}
+
+// ---- Goto out of deeply nested blocks ----
+{
+    println("Test 10: Out of deep nesting");
+    var y = "";
+    level1:
+    {
+        y = y + "1";
+        {
+            y = y + "2";
+            {
+                y = y + "3";
+                goto _done;
+            }
+            y = y + "X"; // skipped
+        }
+        y = y + "Y"; // skipped
+    }
+    _done:
+    y = y + "!";
+    println("expected: 123!");
+    println("actual: ", y);
+}
+
+// ---- Goto to label defined after nested block ----
+{
+    println("Test 11: Forward to label outside nested block");
+    var t = "";
+    {
+        t = t + "a";
+        goto _outside;
+    }
+    t = t + "b"; // skipped
+    _outside:
+    t = t + "c";
+    println("expected: ac");
+    println("actual: ", t);
+}
+
+// ---- Goto into and out of multiple loops (simulate break) ----
+{
+    println("Test 12: Break out of nested loops with goto");
+    var z = "";
+    loop1:
+    for (var i = 0; i < 2; i = i + 1) {
+        for (var j = 0; j < 2; j = j + 1) {
+            z = z + str(i) + str(j);
+            if (i == 1 and j == 0) goto out;
+        }
+    }
+    out:
+    z = z + "!";
+    println("expected: 000110!");
+    println("actual: ", z);
+}
+
+// ---- Re-entering a label from different code paths (test state after jump) ----
+{
+    println("Test 13: Re-enter same label from different paths");
+    var total = 0;
+    if (total == 0) goto again;
+    total = 123; // skipped
+    again:
+    total = total + 2;
+    if (total < 5) goto again;
+    println("expected: 6");
+    println("actual: ", total);
+}
+
+// ---- Goto to shared label at function end ----
+{
+    println("Test 14: Forward goto to function end");
+    var f = "";
+    if (true) goto endf;
+    f = f + "X"; // skipped
+    endf:
+    f = f + "Z";
+    println("expected: Z");
+    println("actual: ", f);
+}
+
+// ---- Nested gotos to same label with stack change ----
+{
+    println("Test 13: Nested gotos with stack change");
+    var out = "";
+    if (true) goto foo;
+    out = out + "X"; // skipped
+    foo:
+    out = out + "A";
+    if (out.size() < 3) goto foo;
+    println("expected: AAA");
+    println("actual: ", out);
+}

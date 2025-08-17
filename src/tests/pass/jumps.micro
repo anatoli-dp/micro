@@ -1,0 +1,168 @@
+// ---- Simple forward jmp ----
+{
+    println("Test 1: Simple forward jmp")
+    var x = 1
+    jmp target1
+    x = 99
+    target1:
+    x = x + 1
+    println("expected: 2")
+    println("actual: ", x)
+}
+
+// ---- Simple backward jmp ----
+{
+    println("Test 2: Simple backward jmp")
+    var sum = 0
+    var i = 0
+    loop:
+    sum = sum + i
+    i = i + 1
+    if (i < 4) jmp loop
+    println("expected: 6") // 0+1+2+3
+    println("actual: ", sum)
+}
+
+// ---- Multiple jmps to the same label ----
+{
+    println("Test 3: Multiple jmps to same label")
+    var a = 0
+    if (a == 0) jmp shared
+    a = 99
+    shared:
+    a = a + 5
+    if (a < 6) jmp shared
+    println("expected: 10")
+    println("actual: ", a)
+}
+
+// unsafe for raw jumps as cleanup from for scope isnt done . . . but this is still possible . . .
+// ---- jmp inside loop (forward out of loop) ----
+/*{
+    println("Test 4: jmp forward out of loop")
+    var s = ""
+    for (var i = 0; i < 3; i = i + 1) {
+        if (i == 2) jmp after
+        s = s + str(i)
+    }
+    after:
+    s = s + "!"
+    println("expected: 01!")
+    println("actual: ", s)
+}*/
+
+// ---- jmp inside loop (backward to loop header) ----
+{
+    println("Test 5: jmp backward to loop header")
+    var c = 0
+    start:
+    c = c + 1
+    if (c < 3) jmp start
+    println("expected: 3")
+    println("actual: ", c)
+}
+
+// ---- Nested labels, jmp outer label ----
+{
+    println("Test 6: Nested labels, jmp outer label")
+    var x = ""
+    outer:
+    {
+        inner:
+        {
+            x = x + "a"
+            jmp exit
+        }
+        x = x + "b"; // should be skipped
+    }
+    x = x + "c"
+    exit:
+    println("expected: a")
+    println("actual: ", x)
+}
+
+// ---- Multiple labels in a row ----
+{
+    println("Test 7: Multiple labels in a row")
+    var y = 2
+    first:
+    second:
+    third:
+    y = y * 2
+    println("expected: 4")
+    println("actual: ", y)
+}
+
+// ---- jmp inside if-else chain ----
+{
+    println("Test 11: jmp inside if-else chain")
+    var msg = ""
+    if (1 == 2) {
+        msg = "A"
+        jmp done
+    } else {
+        msg = "B"
+        jmp done
+    }
+    msg = "C"
+    done:
+    msg = msg + "!"
+    println("expected: B!")
+    println("actual: ", msg)
+}
+
+// ---- Multiple jmps and labels in sequence ----
+{
+    println("Test 12: Multiple jmps and labels in sequence")
+    var o = ""
+    jmp label2
+    label1:
+    o = o + "x"
+    jmp end
+    label2:
+    o = o + "y"
+    jmp label1
+    end:
+    o = o + "z"
+    println("expected: yxz")
+    println("actual: ", o)
+}
+
+// ---- Deeply nested jmps ----
+{
+    println("Test 13: Deeply nested jmps")
+    var out = ""
+    _outer:
+    {
+        middle:
+        {
+            inner:
+            {
+                out = out + "a"
+                jmp afterInner
+            }
+            out = out + "b"
+            afterInner:
+            out = out + "c"
+            jmp afterMiddle
+        }
+        out = out + "d"
+        afterMiddle:
+        out = out + "e"
+    }
+    out = out + "f"
+    println("expected: acef")
+    println("actual: ", out)
+}
+
+// ---- jmp in function (no cross function jumps) ----
+func testFunc() {
+    println("Test 14: jmp in function scope")
+    var sum = 0
+    x1:
+    sum = sum + 2
+    if (sum < 6) jmp x1
+    println("expected: 6")
+    println("actual: ", sum)
+}
+testFunc()

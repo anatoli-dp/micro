@@ -1,0 +1,100 @@
+// === Binary Literals ===
+{
+    print("Binary Literals")
+    println("Expected : actual >> ", 0, " : ", 0b0)
+    println("Expected : actual >> ", 1, " : ", 0b1)
+    println("Expected : actual >> ", 10, " : ", 0b1010)
+    println("Expected : actual >> ", 240, " : ", 0b1111_0000)
+    println("Expected : actual >> ", 256, " : ", 0b1_0000_0000)
+    println("Expected : actual >> ", 1023, " : ", 0b11_1111_1111)
+    println("Expected : actual >> ", 4294967295, " : ", 0b11111111111111111111111111111111)
+}
+
+// === Hex Literals ===
+{
+    print("Hex Literals")
+    println("Expected : actual >> ", 0, " : ", 0x0)
+    println("Expected : actual >> ", 1, " : ", 0x1)
+    println("Expected : actual >> ", 10, " : ", 0xA)
+    println("Expected : actual >> ", 15, " : ", 0xF)
+    println("Expected : actual >> ", 16, " : ", 0x10)
+    println("Expected : actual >> ", 3735928559, " : ", 0xDEAD_BEEF)
+    println("Expected : actual >> ", 2147483647, " : ", 0x7FFF_FFFF)
+    println("Expected : actual >> ", 4294967295, " : ", 0xFFFF_FFFF)
+    println("Expected : actual >> ", 137438953471, " : ", 0x1F_FF_FF_FF_FF)
+}
+
+// === Decimal with Underscores ===
+{
+    print("Decimal with Underscores")
+    println("Expected : actual >> ", 1000, " : ", 1_000)
+    println("Expected : actual >> ", 1000000, " : ", 1_000_000)
+    println("Expected : actual >> ", 9007199254740991, " : ", 90_071_992_547_409_91)
+}
+
+// === Bitwise AND ===
+{
+    print("Bitwise AND")
+    println("Expected : actual >> ", 8, " : ", 0b1010 & 0b1100)
+    println("Expected : actual >> ", 15, " : ", 0xFF & 0x0F)
+    println("Expected : actual >> ", 1, " : ", 255 & 1)
+}
+
+// === Bitwise OR ===
+{
+    print("Bitwise OR")
+    println("Expected : actual >> ", 14, " : ", 0b1010 | 0b1100)
+    println("Expected : actual >> ", 255, " : ", 0xF0 | 0x0F)
+    println("Expected : actual >> ", 3, " : ", 1 | 2)
+}
+
+// === Bitwise XOR ===
+{
+    print("Bitwise XOR")
+    println("Expected : actual >> ", 6, " : ", 0b1010 ^ 0b1100)
+    println("Expected : actual >> ", 240, " : ", 0xFF ^ 0x0F)
+    println("Expected : actual >> ", 2, " : ", 1 ^ 3)
+}
+
+// === Bitwise NOT ===
+{
+    print("Bitwise NOT");
+    println("Expected : actual >> ", -1, " : ", ~0)
+    println("Expected : actual >> ", -2, " : ", ~1)
+    println("Expected : actual >> ", -256, " : ", ~0xFF)
+    println("Expected : actual >> ", -43, " : ", ~0b101010)
+}
+
+// === Left Shift ===
+{
+    print("Left Shift");
+    println("Expected : actual >> ", 1, " : ", 1 << 0)
+    println("Expected : actual >> ", 8, " : ", 1 << 3)
+    println("Expected : actual >> ", 8, " : ", 2 << 2)
+    println("Expected : actual >> ", 256, " : ", 0x10 << 4)
+    println("Expected : actual >> ", 4503599627370496, " : ", 0b1 << 52)
+}
+
+// === Right Shift ===
+{
+    print("Right Shift")
+    println("Expected : actual >> ", 8, " : ", 8 >> 0)
+    println("Expected : actual >> ", 4, " : ", 8 >> 1)
+    println("Expected : actual >> ", 2, " : ", 9 >> 2)
+    println("Expected : actual >> ", 15, " : ", 0xFF >> 4)
+}
+
+// === Mixed binary/hex/bitwise ===
+{
+    print("Mixed binary/hex/bitwise")
+    println("Expected : actual >> ", 0, " : ", (0b1100 & 0xF0) >> 2)
+    println("Expected : actual >> ", 255, " : ", (0xFF00 | 0b1111_0000) >> 8)
+    println("Expected : actual >> ", 158, " : ", (0x1234 ^ 0b1010_1010) & 0xFF)
+}
+
+// === 2^53 Boundary Checks ===
+{
+    print("2^53 Boundary Checks")
+    println("Expected : actual >> ", 9007199254740991, " : ", 0b1_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111)
+    println("Expected : actual >> ", 9007199254740991, " : ", 0x1F_FF_FF_FF_FF_FF_FF)
+}

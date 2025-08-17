@@ -1,0 +1,268 @@
+// --- CLASS AND CLOSURE SEMICOLONLESS TEST SUITE ---
+
+{
+    println("Test 1: Basic class, no semicolons")
+    class Foo {
+        init() {
+            this.x = 10
+            this.y = 20
+        }
+        sum() {
+            return this.x + this.y
+        }
+    }
+    var f = Foo()
+    println("expected: 30")
+    println("actual: ", f.sum())
+}
+
+{
+    println("Test 2: Class with mixed semicolons")
+    class Bar {
+        init() {
+            this.v = 1
+            this.w = 2
+        }
+        getV() { return this.v }
+        getW() { return this.w }
+    }
+    var b = Bar()
+    println("expected: 1,2")
+    println("actual: ", b.getV(), ",", b.getW())
+}
+
+{
+    println("Test 5: Method calls with line breaks")
+    class C {
+        m1() { return 1 }
+        m2() { return 2 }
+    }
+    var obj = C()
+    println("expected: 1,2")
+    println("actual: "
+        ,obj.m1(),
+        ","
+        ,obj.m2()
+    )
+}
+
+{
+    println("Test 6: Nested blocks in method")
+    class N {
+        f() {
+            var x = 1
+            {
+                var y = 2
+                x = x + y
+            }
+            return x
+        }
+    }
+    var n = N()
+    println("expected: 3")
+    println("actual: ", n.f())
+}
+
+{
+    println("Test 7: Closure captures variable")
+    func makeAdder(n) {
+        return func(x) {
+            return x + n
+        }
+    }
+    var add3 = makeAdder(3)
+    println("expected: 8")
+    println("actual: ", add3(5))
+}
+
+{
+    println("Test 8: Closure block with blank lines")
+    func makeCounter() {
+        var count = 0
+
+        return func() {
+            count = count + 1
+
+            return count
+        }
+    }
+    var ctr = makeCounter()
+    println("expected: 1,2")
+    println("actual: ", ctr(), ",", ctr())
+}
+
+{
+    println("Test 9: Method returns closure that captures this")
+    class Capturer {
+        init() { this.z = 7 }
+        getter() {
+            return func() {
+                return this.z
+            }
+        }
+    }
+    var cp = Capturer()
+    var getz = cp.getter()
+    println("expected: 7")
+    println("actual: ", getz())
+}
+
+{
+    println("Test 10: Nested closures, multiline")
+    func nest(a) {
+        return func(b) {
+            return func(c) {
+                return a + b + c
+            }
+        }
+    }
+    var n1 = nest(1)
+    var n2 = n1(2)
+    var n3 = n2(3)
+    println("expected: 6")
+    println("actual: ", n3)
+}
+
+{
+    println("Test 11: Class stores closure as field")
+    class Q {
+        init() {
+            this.funcField = func(x) { return x * 2 }
+        }
+        callFun(y) {
+            return this.funcField(y)
+        }
+    }
+    var q = Q()
+    println("expected: 8")
+    println("actual: ", q.callFun(4))
+}
+
+{
+    println("Test 12: Method returns closure that uses fields")
+    class Mul {
+        init() { this.factor = 3 }
+        getMultiplier() {
+            return func(x) {
+                return x * this.factor
+            }
+        }
+    }
+    var mul = Mul()
+    var mfuncc = mul.getMultiplier()
+    println("expected: 15")
+    println("actual: ", mfuncc(5))
+}
+
+{
+    println("Test 13: Method assigns closure to var")
+    class Z {
+        f() {
+            var g = func(n) {
+                return n + 100
+            }
+            return g(23)
+        }
+    }
+    var z = Z()
+    println("expected: 123")
+    println("actual: ", z.f())
+}
+
+{
+    println("Test 14: Closure inside loop")
+    class Accum {
+        getFun() {
+            var sum = 0
+            for (var i = 1; i < 4; i = i + 1) {
+                sum = sum + i
+            }
+            return func() { return sum }
+        }
+    }
+    var acc = Accum()
+    var getSum = acc.getFun()
+    println("expected: 6")
+    println("actual: ", getSum())
+}
+
+{
+    println("Test 15: Closure returns closure")
+    func f1() {
+        return func() {
+            return func() {
+                return 42
+            }
+        }
+    }
+    var g1 = f1()
+    var g2 = g1()
+    println("expected: 42")
+    println("actual: ", g2())
+}
+
+{
+    println("Test 16: Class with multi-line constructor")
+    class Big {
+        init() {
+            this.a = 10
+            this.b = 20
+            this.c = this.a + this.b
+        }
+        getC() {
+            return this.c
+        }
+    }
+    var big = Big()
+    println("expected: 30")
+    println("actual: ", big.getC())
+}
+
+{
+    println("Test 17: Multiple returns and blank lines")
+    class Multi {
+        pick(n) {
+            if (n == 1) return "one"
+
+            if (n == 2) return "two"
+
+            return "other"
+        }
+    }
+    var m = Multi()
+    println("expected: one two other")
+    println("actual: ", m.pick(1), " ", m.pick(2), " ", m.pick(3))
+}
+
+{
+    println("Test 18: Class inheritance, super calls, field inheritance")
+
+    class Parent {
+        init() {
+            this.a = 10
+        }
+        getA() {
+            return this.a
+        }
+        speak() {
+            return "parent"
+        }
+    }
+
+    class Child < Parent {
+        init() {
+            super.init()
+            this.b = 20
+        }
+        getB() {
+            return this.b
+        }
+        speak() {
+            return super.speak() + " + child"
+        }
+    }
+
+    var c = Child()
+    println("expected: 10 20 parent + child")
+    println("actual: ", c.getA(), " ", c.getB(), " ", c.speak())
+}

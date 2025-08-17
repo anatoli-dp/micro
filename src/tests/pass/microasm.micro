@@ -1,0 +1,61 @@
+func monster()
+microasm {
+    rload i0 10000        // i0 = loop count
+    rload i1 0            // i1 = i (loop var)
+    rload f0 0.0          // f0 = accumulator
+    rload i2 1            // i2 = constant 1
+    rload i3 3            // i3 = constant 3
+    rload i4 7            // i4 = constant 7
+    rload f1 0.25         // f1 = constant 0.25
+
+loop_start:
+    rsub i5 i0 i1         // i5 = remaining = i0 - i1
+    jz i5 .loop_end        // if remaining == 0, break
+
+    // f2 = (i * i + i) / (i + 1)
+    rmul i6 i1 i1         // i6 = i*i
+    radd i6 i6 i1         // i6 = i*i + i
+    radd i7 i1 i2         // i7 = i + 1
+    rdiv i6 i6 i7         // i6 = (i*i + i)/(i+1)
+    rmov f2 i6            // f2 = float(i6)
+
+    // f3 = (i * 3 - 7) * 0.25
+    rmul i6 i1 i3         // i6 = i*3
+    rsub i6 i6 i4         // i6 = i*3 - 7
+    rmov f3 i6            // f3 = float(i6)
+    rmul f3 f3 f1         // f3 = (i*3 - 7) * 0.25
+
+    // f0 += f2 + f3
+    radd f2 f2 f3
+    radd f0 f0 f2
+
+    radd i1 i1 i2         // i += 1
+    jmp .loop_start
+
+loop_end:
+    return f0
+}
+
+func slowmon()
+{
+    var result = 0.0
+    for (var i = 0; i < 10000; i = i + 1)
+    {
+        var x = (i * i + i) / (i + 1)
+        var y = (i * 3 - 7) * 0.25
+        result = result + x + y
+    }
+    return result
+}
+
+var t0 = clock()
+var r1 = monster()
+var t1 = clock()
+
+var t2 = clock()
+var r2 = slowmon()
+var t3 = clock()
+
+println("RESULT: ", r1)
+println("FAST PATH:", t1 - t0)
+println("SLOW PATH:", t3 - t2)

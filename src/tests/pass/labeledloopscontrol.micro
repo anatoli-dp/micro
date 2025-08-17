@@ -1,0 +1,495 @@
+// ---- while with break ----
+{
+    println("Test 1: while with break")
+    var x = 0
+    while (true) {
+      x = x + 2
+      break
+      x = x + 100
+    }
+    println("expected: 2")
+    println("actual: ", x)
+}
+
+// ---- while with continue ----
+{
+    println("Test 2: while with continue")
+    var s = ""
+    var i = 0
+    while (i < 4) {
+      i = i + 1
+      if (i == 2) continue
+      s = s + str(i)
+    }
+    println("expected: 134")
+    println("actual: ", s)
+}
+
+// ---- for with break ----
+{
+    println("Test 3: for with break")
+    var y = 0
+    for (var i = 0; i < 5; i = i + 1) {
+      y = y + 1
+      if (i == 2) break
+    }
+    println("expected: 3")
+    println("actual: ", y)
+}
+
+// ---- for with continue ----
+{
+    println("Test 4: for with continue")
+    var t = ""
+    for (var i = 0; i < 4; i = i + 1) {
+      if (i == 1) continue
+      t = t + str(i)
+    }
+    println("expected: 023")
+    println("actual: ", t)
+}
+
+// ---- do-while with break ----
+{
+    println("Test 5: do-while with break")
+    var z = 1
+    do {
+      z = z + 10
+      break
+      z = z + 100
+    } while (false)
+    println("expected: 11")
+    println("actual: ", z)
+}
+
+// ---- do-while with continue ----
+{
+    println("Test 6: do-while with continue")
+    var out = ""
+    var j = 0
+    do {
+      j = j + 1
+      if (j == 2) continue
+      out = out + str(j)
+    } while (j < 3)
+    println("expected: 13") // j=1 (added), j=2 (skipped), j=3 (added)
+    println("actual: ", out)
+}
+
+// ---- nested loops: break inner only ----
+{
+    println("Test 7: nested loops: break inner only")
+    var n = 0
+    for (var i = 0; i < 2; i = i + 1) {
+      for (var j = 0; j < 5; j = j + 1) {
+        if (j == 1) break
+        n = n + 1
+      }
+    }
+    println("expected: 2")
+    println("actual: ", n)
+}
+
+// ---- nested loops: continue inner only ----
+{
+    println("Test 8: nested loops: continue inner only")
+    var string = ""
+    for (var i = 0; i < 2; i = i + 1) {
+      for (var j = 0; j < 3; j = j + 1) {
+        if (j == 1) continue
+        string = string + str(j)
+      }
+      string = string + "-"
+    }
+    println("expected: 02-02-")
+    println("actual: ", string)
+}
+
+// ---- break/continue in same loop ----
+{
+    println("Test 9: break/continue in same loop")
+    var k = ""
+    for (var i = 0; i < 5; i = i + 1) {
+      if (i == 2) break
+      if (i == 0) continue
+      k = k + str(i)
+    }
+    println("expected: 1")
+    println("actual: ", k)
+}
+
+// ---- do-while: multiple continues ----
+{
+    println("Test 10: do-while multiple continues")
+    var out2 = ""
+    var m = 0
+    do {
+      m = m + 1
+      if (m % 2 == 0) continue
+      out2 = out2 + str(m)
+    } while (m < 5)
+    println("expected: 135")
+    println("actual: ", out2)
+}
+
+// ---- Unlabeled break inside labeled loop ----
+{
+    println("Test 11: unlabeled break in labeled loop (while)")
+    var x = 0
+    mylabel_11: while (true) {
+      x = 7
+      break
+      x = 42 // should not run
+    }
+    println("expected: 7")
+    println("actual: ", x)
+}
+
+// ---- Unlabeled continue inside labeled loop ----
+{
+    println("Test 12: unlabeled continue in labeled loop (for)")
+    var total = 0
+    loopA_12: for (var i = 0; i < 4; i = i + 1) {
+      if (i == 2) continue
+      total = total + i
+    }
+    println("expected: 4") // 0+1+3 (skip i=2)
+    println("actual: ", total)
+}
+
+// ---- Unlabeled break in inner loop (labeled outer) ----
+{
+    println("Test 13: unlabeled break in inner loop, labeled outer")
+    var s = ""
+    out_13: for (var i = 0; i < 2; i = i + 1) {
+      for (var j = 0; j < 3; j = j + 1) {
+        if (j == 1) break
+        s = s + str(j)
+      }
+      s = s + "-"
+    }
+    println("expected: 0-0-")
+    println("actual: ", s)
+}
+
+// ---- Unlabeled continue in inner loop (labeled outer) ----
+{
+    println("Test 14: unlabeled continue in inner loop, labeled outer")
+    var s = ""
+    top_14: for (var i = 0; i < 2; i = i + 1) {
+      for (var j = 0; j < 3; j = j + 1) {
+        if (j == 1) continue
+        s = s + str(j)
+      }
+      s = s + "-"
+    }
+    println("expected: 02-02-")
+    println("actual: ", s)
+}
+
+// ---- Labeled inner, unlabeled break in outer ----
+{
+    println("Test 15: labeled inner, unlabeled break in outer")
+    var y = ""
+    for (var i = 0; i < 3; i = i + 1) {
+      inner_15: for (var j = 0; j < 2; j = j + 1) {
+        y = y + str(j)
+      }
+      y = y + "-"
+      if (i == 1) break
+    }
+    println("expected: 01-01-")
+    println("actual: ", y)
+}
+
+// ---- Mixed: labeled and unlabeled break/continue together ----
+{
+    println("Test 16: mixed labeled/unlabeled break/continue")
+    var r = ""
+    outer_16: for (var i = 0; i < 3; i = i + 1) {
+      for (var j = 0; j < 2; j = j + 1) {
+        if (j == 0) continue     // Should skip j==0 only
+        r = r + str(j)
+        if (i == 1) break        // Should break inner only
+      }
+      if (i == 2) break outer_16 // Should break outer at i==2
+      r = r + "-"
+    }
+    println("expected: 1-1-1")
+    println("actual: ", r)
+}
+
+// ---- do-while: unlabeled break in labeled loop ----
+{
+    println("Test 17: do-while unlabeled break in labeled loop")
+    var n = 0
+    myloop_17: do {
+      n = n + 5
+      break
+      n = n + 100
+    } while (false)
+    println("expected: 5")
+    println("actual: ", n)
+}
+
+// ---- do-while: unlabeled continue in labeled loop ----
+{
+    println("Test 18: do-while unlabeled continue in labeled loop")
+    var s = ""
+    var i = 0
+    loopy_18: do {
+      i = i + 1
+      if (i == 2) continue
+      s = s + str(i)
+    } while (i < 3)
+    println("expected: 13") // i=1 (added), i=2 (skipped), i=3 (added)
+    println("actual: ", s)
+}
+
+// ---- deeply nested: labeled outer, unlabeled break in innermost ----
+{
+    println("Test 19: deeply nested: labeled outer, unlabeled break in innermost")
+    var v = ""
+    top_19: for (var i = 0; i < 2; i = i + 1) {
+      mid_19: for (var j = 0; j < 2; j = j + 1) {
+        for (var k = 0; k < 2; k = k + 1) {
+          v = v + "x"
+          break // Should break only k loop
+        }
+        v = v + "-"
+      }
+      v = v + "*"
+    }
+    println("expected: x-x-*x-x-*")
+    println("actual: ", v)
+}
+
+// ---- Labeled break: single loop ----
+{
+    println("Test 20: labeled break: single loop")
+    var x = 0
+    outer_20: while (true) {
+      x = x + 1
+      break outer_20
+      x = x + 100 // should not run
+    }
+    println("expected: 1")
+    println("actual: ", x)
+}
+
+// ---- Labeled continue: single loop ----
+{
+    println("Test 21: labeled continue: single loop")
+    var x = 0
+    count_21: for (var i = 0; i < 5; i = i + 1) {
+      if (i == 2) continue count_21
+      x = x + i
+    }
+    println("expected: 8") // 0+1+3+4 (skips i=2)
+    println("actual: ", x)
+}
+
+// ---- Labeled break: break outer from inner ----
+{
+    println("Test 22: labeled break: nested loop, break outer")
+    var x = 0
+    outer_22: while (x < 5) {
+      var y = 0
+      inner_22: while (y < 5) {
+        if (y == 2) break outer_22
+        y = y + 1
+        x = x + 1
+      }
+    }
+    println("expected: 2")
+    println("actual: ", x)
+}
+
+// ---- Labeled break: break inner only ----
+{
+    println("Test 23: labeled break: nested loop, break inner")
+    var s = ""
+    outer_23: for (var i = 0; i < 2; i = i + 1) {
+      inner_23: for (var j = 0; j < 5; j = j + 1) {
+        if (j == 2) break inner_23
+        s = s + str(j)
+      }
+      s = s + "-"
+    }
+    println("expected: 01-01-")
+    println("actual: ", s)
+}
+
+// ---- Labeled continue: continue inner ----
+{
+    println("Test 24: labeled continue: continue inner loop")
+    var out = ""
+    outer_24: for (var i = 0; i < 2; i = i + 1) {
+      inner_24: for (var j = 0; j < 3; j = j + 1) {
+        if (j == 1) continue inner_24
+        out = out + str(j)
+      }
+      out = out + "-"
+    }
+    println("expected: 02-02-")
+    println("actual: ", out)
+}
+
+// ---- Labeled continue: continue outer from inner ----
+{
+    println("Test 25: labeled continue: continue outer from inner")
+    var out = ""
+    outer_25: for (var i = 0; i < 3; i = i + 1) {
+      inner_25: for (var j = 0; j < 3; j = j + 1) {
+        if (j == 1) continue outer_25
+        out = out + str(j)
+      }
+      out = out + "-"
+    }
+    println("expected: 000")
+    println("actual: ", out)
+}
+
+// ---- Unlabeled break in labeled loop ----
+{
+    println("Test 26: unlabeled break in labeled loop")
+    var x = 0
+    mylabel_26: while (true) {
+      x = 1
+      break
+      x = 100
+    }
+    println("expected: 1")
+    println("actual: ", x)
+}
+
+// ---- Unlabeled continue in labeled loop ----
+{
+    println("Test 27: unlabeled continue in labeled loop")
+    var x = 0
+    main_27: for (var i = 0; i < 3; i = i + 1) {
+      if (i == 1) continue
+      x = x + i
+    }
+    println("expected: 2") // i=0, i=2
+    println("actual: ", x)
+}
+
+// ---- Labeled break in deeply nested (skip two levels) ----
+{
+    println("Test 28: labeled break: 3-deep, skip 2 levels")
+    var n = 0
+    one_28: for (var i = 0; i < 2; i = i + 1) {
+      two_28: for (var j = 0; j < 2; j = j + 1) {
+        three_28: for (var k = 0; k < 2; k = k + 1) {
+          n = n + 1
+          break one_28
+        }
+      }
+    }
+    println("expected: 1")
+    println("actual: ", n)
+}
+
+// ---- Labeled continue in deeply nested (outer) ----
+{
+    println("Test 29: labeled continue: 3-deep, continue outer")
+    var n = ""
+    one_29: for (var i = 0; i < 2; i = i + 1) {
+      two_29: for (var j = 0; j < 2; j = j + 1) {
+        three_29: for (var k = 0; k < 2; k = k + 1) {
+          if (k == 1) continue one_29
+          n = n + str(k)
+        }
+        n = n + "-"
+      }
+    }
+    println("expected: 00")
+    println("actual: ", n)
+}
+
+// ---- Labeled break: do-while loop ----
+{
+    println("Test 30: labeled break: do-while")
+    var x = 0
+    outer_30: do {
+      x = x + 1
+      break outer_30
+      x = x + 100
+    } while (false)
+    println("expected: 1")
+    println("actual: ", x)
+}
+
+// ---- Labeled continue: do-while loop ----
+{
+    println("Test 31: labeled continue: do-while")
+    var s = ""
+    letters_31: do {
+      s = s + "a"
+      if (s.size() < 2) continue letters_31
+      s = s + "z"
+    } while (s.size() < 3)
+    println("expected: aaz")
+    println("actual: ", s)
+}
+
+// ---- Labeled break/continue in nested do-while ----
+{
+    println("Test 32: labeled break: nested do-while, break outer")
+    var n = 0
+    outer_32: do {
+      inner_32: do {
+        n = n + 1
+        break outer_32
+        n = n + 100
+      } while (false)
+      n = n + 1000
+    } while (false)
+    println("expected: 1")
+    println("actual: ", n)
+}
+
+{
+    println("Test 33: labeled continue: nested do-while, continue outer")
+    var t = ""
+    outer_33: do {
+      inner_33: do {
+        t = t + "x"
+        continue outer_33
+        t = t + "y"
+      } while (false)
+      t = t + "z"
+    } while (t.size() < 2)
+    println("expected: xx")
+    println("actual: ", t)
+}
+
+// ---- Labeled break/continue mixing for, do-while, and while ----
+{
+    println("Test 34: labeled break: mixed loop types, break for (from do-while)")
+    var y = 0
+    main_34: for (var i = 0; i < 5; i = i + 1) {
+      check_34: do {
+        if (i == 2) break main_34
+        y = y + 1
+      } while (false)
+    }
+    println("expected: 2")
+    println("actual: ", y)
+}
+
+{
+    println("Test 35: labeled continue: mixed loop types, continue while (from do-while)")
+    var z = 0
+    var j = 0
+    main_35: while (j < 4) {
+      check_35: do {
+        j = j + 1
+        if (j == 3) continue main_35
+        z = z + j
+      } while (false)
+    }
+    println("expected: 7") // j=1,2,4
+    println("actual: ", z)
+}
